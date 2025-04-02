@@ -1,32 +1,33 @@
 class Fish {
     
-    constructor (origin) {
+    constructor (origin, scale) {
         // 12 segments, first 10 for body, last 2 for tail fin
-        this.fishSegLength = 48
+        this.fishSegLength = 48 * scale
         this.fishVertebrae = 12
         this.spine = new Chain(origin, this.fishVertebrae, this.fishSegLength, Math.PI/8)
 
-        this.bodyColor = (58, 124, 165);
-        this.finColor =  (129, 195, 215);
+        this.bodyColor = 'rgb(159, 222, 254)';
+        this.finColor =  'rgb(83, 203, 157)';
       
         // Width of the fish at each vertabra
         this.bodyWidth = [68, 81, 84, 83, 77, 64, 51, 38, 32, 19];
+
+        // Scale all parts of fish for desired scale
+        for (var i =0; i < this.bodyWidth.length; i++) {
+            this.bodyWidth[i] = this.bodyWidth[i] * scale
+        }
+
+        this.pecFinWidth = 32 * scale
+        this.pecFinLen   = 80 * scale
+        this.venFinWidth = 16 * scale
+        this.venFinLen   = 40 * scale
+        this.eyeRadius   = 18 * scale  
     }
 
     resolve (targetX, targetY) {
         let headPos = this.spine.joints[0]
-        let currentDirection = this.spine.joints[1].heading(headPos);
         
         let targetPos = new PVector(targetX, targetY)
-
-        // Check if we have reached target Pos 
-        if (headPos.sub(targetPos).getMag() < 10) {
-            return;
-        }
-
-        if (relativeAngleDiff(headPos.heading(targetPos), currentDirection) > 1 ) {
-            return;
-        }
 
         //targetPos = targetPos.add(headPos.heading());
         this.spine.resolve(targetPos);
@@ -47,8 +48,7 @@ class Fish {
         // A quick workaround is to compute the angle difference from the head to the middle of the fish, and then
         // from the middle of the fish to the tail.
         let headToTail = headToMid1 + relativeAngleDiff(a[6], a[11]);
-        console.log(headToTail)
-
+        ctx.lineWidth = 5;
         ctx.beginPath();
         for (var i = 0; i < this.fishVertebrae; i++)
         {
@@ -58,16 +58,24 @@ class Fish {
 
         // Pectoral Fins
         ctx.beginPath()
-        ctx.fillStyle = "green"
-        ctx.ellipse(this.getPosX(3, Math.PI/3, 0), this.getPosY(3, Math.PI/3, 0), 32, 80, a[2] + Math.PI/4, 0, 2 * Math.PI)
+        ctx.fillStyle = this.finColor
+        ctx.ellipse(this.getPosX(3, Math.PI/3, 0), this.getPosY(3, Math.PI/3, 0), this.pecFinWidth, this.pecFinLen, a[2] + Math.PI/4, 0, 2 * Math.PI)
         ctx.fill()
         ctx.stroke()
         ctx.beginPath()
-        ctx.ellipse(this.getPosX(3, -Math.PI/3, 0), this.getPosY(3, -Math.PI/3, 0), 32, 80, a[2] - Math.PI/4, 0, 2 * Math.PI)
-        
+        ctx.ellipse(this.getPosX(3, -Math.PI/3, 0), this.getPosY(3, -Math.PI/3, 0), this.pecFinWidth, this.pecFinLen, a[2] - Math.PI/4, 0, 2 * Math.PI)
         ctx.fill()
         ctx.stroke()
         // Ventral Fins
+        ctx.beginPath()
+        ctx.fillStyle = this.finColor
+        ctx.ellipse(this.getPosX(7, Math.PI/3, 0), this.getPosY(7, Math.PI/3, 0), this.venFinWidth, this.venFinLen, a[6] + Math.PI/4, 0, 2 * Math.PI)
+        ctx.fill()
+        ctx.stroke()
+        ctx.beginPath()
+        ctx.ellipse(this.getPosX(7, -Math.PI/3, 0), this.getPosY(7, -Math.PI/3, 0), this.venFinWidth, this.venFinLen, a[6] - Math.PI/4, 0, 2 * Math.PI)
+        ctx.fill()
+        ctx.stroke()
 
         // Side 1 of the body
         ctx.beginPath();
@@ -100,20 +108,21 @@ class Fish {
         ctx.lineTo(this.getPosX(0, Math.PI/2, 0), this.getPosY(0, Math.PI/2, 0));
         ctx.lineTo(this.getPosX(1, Math.PI/2, 0), this.getPosY(1, Math.PI/2, 0));
         ctx.lineTo(this.getPosX(2, Math.PI/2, 0), this.getPosY(2, Math.PI/2, 0));
-        ctx.fillStyle = "lightblue";
+        ctx.fillStyle = this.bodyColor;
         ctx.fill()
         ctx.stroke();
 
-        ctx.beginPath();
         // eyes
-        ctx.ellipse(this.getPosX(0, Math.PI/2, -18), this.getPosY(0, Math.PI/2, -18), 18, 18, Math.PI/2, 0, 2 * Math.PI)
-        ctx.fillStyle = "white";
+        ctx.beginPath();
+        ctx.ellipse(this.getPosX(0, Math.PI/2, -this.eyeRadius), this.getPosY(0, Math.PI/2, -this.eyeRadius), this.eyeRadius, this.eyeRadius, Math.PI/2, 0, 2 * Math.PI)
+        ctx.fillStyle = 'rgb(255, 255, 255)';
         ctx.fill()
         ctx.stroke();
         ctx.beginPath();
-        ctx.ellipse(this.getPosX(0, -Math.PI/2, -18), this.getPosY(0, -Math.PI/2, -18), 18, 18, Math.PI/2, 0, 2 * Math.PI)
+        ctx.ellipse(this.getPosX(0, -Math.PI/2, -this.eyeRadius), this.getPosY(0, -Math.PI/2, -this.eyeRadius), this.eyeRadius, this.eyeRadius, Math.PI/2, 0, 2 * Math.PI)
         ctx.fill()
         ctx.stroke();
+     
 
         // Claudal (Tail) Fin
         ctx.beginPath();
@@ -127,7 +136,7 @@ class Fish {
             ctx.lineTo(j[i].x + Math.cos(a[i] + Math.PI/2) * tailWidth, j[i].y + Math.sin(a[i] + Math.PI/2) * tailWidth);
         }
 
-        ctx.fillStyle = 'green'
+        ctx.fillStyle = this.finColor
         ctx.fill()
         ctx.stroke();
 
@@ -137,9 +146,6 @@ class Fish {
         ctx.moveTo(j[4].x, j[4].y)
         ctx.bezierCurveTo(j[5].x, j[5].y, j[6].x, j[6].y, j[7].x, j[7].y)
         ctx.bezierCurveTo(j[6].x + Math.cos(a[6] + Math.PI/2) * headToMid2 * 16, j[6].y + Math.sin(a[6] + Math.PI/2) * headToMid2 * 16, j[5].x + Math.cos(a[5] + Math.PI/2) * headToMid1 * 16, j[5].y + Math.sin(a[5] + Math.PI/2) * headToMid1 * 16, j[4].x, j[4].y)
-        //vertex(j.get(4).x, j.get(4).y);
-        //bezierVertex(j.get(5).x, j.get(5).y, j.get(6).x, j.get(6).y, j.get(7).x, j.get(7).y);
-        //bezierVertex(j.get(6).x + cos(a.get(6) + PI/2) * headToMid2 * 16, j.get(6).y + sin(a.get(6) + PI/2) * headToMid2 * 16, j.get(5).x + cos(a.get(5) + PI/2) * headToMid1 * 16, j.get(5).y + sin(a.get(5) + PI/2) * headToMid1 * 16, j.get(4).x, j.get(4).y);
         ctx.fill()
         ctx.stroke();
     // === END DORSAL FIN ===

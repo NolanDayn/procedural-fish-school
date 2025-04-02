@@ -55,18 +55,10 @@ class Chain {
     }
 
     constrainDistanceAngle(point, anchor, lastAngle, distance) {
-        //var delta = point.sub(anchor)
-        //var direction = delta.normalize() 
         var angle =  point.heading(anchor)
-       // var angle = direction.toAngle()
-        //console.log(lastAngle)
-
         let angleC = constrainAngle(angle, lastAngle, 0.4)
         let newP = fromAngle(angleC)
-        console.log(newP)
         let jointC = newP.scale(distance)
-        console.log(jointC.add(anchor))
-        //return jointC.add(anchor)
         return anchor.sub(jointC)
     }
 }
