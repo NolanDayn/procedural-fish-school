@@ -3,7 +3,7 @@ const ctx = canvas.getContext("2d");
 let canvasElem = document.querySelector("canvas");
 
 const NUM_FISH       = 20
-const DISTANCE_APART = 250
+const DISTANCE_APART = 150
 const VISUAL_RANGE   = 400; //Should be larger than distance apart
 const SPEED_LIMIT    = 15
 

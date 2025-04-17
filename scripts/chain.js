@@ -22,12 +22,8 @@ class Chain {
             // Pull segment by the previous one
             this.joints[i + 1] = this.constrainDistanceAngle(this.joints[i + 1], this.joints[i], this.angles[i], length)
             this.angles[i + 1] = this.joints[i + 1].heading(this.joints[i])
-            //console.log(this.constrainDistance(this.joints[i + 1], this.joints[i], length))
-            //this.constrainDistance(this.joints[i + 1], this.joints[i], length)
+
         }
-
-
-
     }
 
     display(ctx) {
@@ -38,7 +34,6 @@ class Chain {
             ctx.lineTo(startJoint.x, startJoint.y, endJoint.x, endJoint.y);
         }
 
-        //ctx.fill(42, 44, 53);
         for (let i = 0; i < this.joints.length - 1; i++) {
            ctx.ellipse(this.joints[i].x, this.joints[i].y, 16, 16, Math.PI/2, 0, 2 * Math.PI)
         }
@@ -49,7 +44,6 @@ class Chain {
     constrainDistance(point, anchor, distance) {
         var delta = point.sub(anchor)
         var direction = delta.normalize() 
-        //console.log(direction)
         var constDist = direction.scale(distance)
         return constDist.add(anchor)
     }

@@ -1,3 +1,4 @@
+// PVector class for basic 2D Vector math functions
 class PVector {
     constructor(x, y) {
         this.x = x
@@ -97,6 +98,7 @@ function simplifyAngle(angle) {
     return angle;
 }
 
+// Create direction vector from provided angle
 function fromAngle (angle) {
     return new PVector(Math.cos(angle), Math.sin(angle))
 }
